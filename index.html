@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs2Site</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div id="loginScreen" class="screen login-screen">
+    <main class="login-panel" aria-labelledby="loginTitle">
+      <p class="eyebrow">Docs2Site</p>
+      <h1 id="loginTitle">הופכים תיקיית Google Docs לאתר תוכן</h1>
+      <p class="lead">התחברו עם Google, הדביקו קישור לתיקיית Drive, וקבלו אתר עברי עם תפריט אוטומטי לפי שמות המסמכים.</p>
+      <button id="loginButton" class="button primary large" type="button">התחברות עם Google</button>
+      <p id="loginMessage" class="helper">נדרש Client ID של Google בקובץ הסביבה כדי להתחבר.</p>
+    </main>
+  </div>
+
+  <div id="adminScreen" class="screen app-screen" hidden>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Docs2Site</p>
+        <h1>ניהול אתר</h1>
+      </div>
+      <button id="logoutButton" class="button ghost" type="button">התנתקות</button>
+    </header>
+
+    <main class="admin-layout">
+      <section class="panel" aria-labelledby="siteFormTitle">
+        <div class="section-heading">
+          <h2 id="siteFormTitle">יצירת אתר מתיקייה</h2>
+          <p>המערכת שולפת רק קבצי Google Docs מתוך התיקייה, ממיינת אותם לפי שם, ומייצאת כל מסמך לעמוד HTML.</p>
+        </div>
+
+        <form id="siteForm" class="site-form">
+          <label for="siteName">שם האתר</label>
+          <input id="siteName" name="siteName" type="text" placeholder="לדוגמה: קורס מבוא" autocomplete="off" required>
+
+          <label for="folderUrl">קישור לתיקיית Google Drive</label>
+          <input id="folderUrl" name="folderUrl" type="url" dir="ltr" placeholder="https://drive.google.com/drive/folders/..." required>
+
+          <label for="primaryColor">צבע ראשי</label>
+          <input id="primaryColor" name="primaryColor" type="color" value="#2563eb">
+
+          <label for="logoUrl">קישור ללוגו, לא חובה</label>
+          <input id="logoUrl" name="logoUrl" type="url" dir="ltr" placeholder="https://example.com/logo.png">
+
+          <label class="toggle-row" for="isPublic">
+            <input id="isPublic" name="isPublic" type="checkbox" checked>
+            <span>פרסום כאתר ציבורי</span>
+          </label>
+
+          <div class="actions">
+            <button id="createButton" class="button primary" type="submit">צור אתר</button>
+            <button id="refreshButton" class="button secondary" type="button" disabled>רענן תוכן</button>
+            <a id="viewSiteButton" class="button secondary link-button" href="#" target="_blank" rel="noreferrer" aria-disabled="true">צפה באתר</a>
+          </div>
+        </form>
+
+        <div class="status-box" role="status" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          <p id="statusText">ממתין להתחברות</p>
+        </div>
+        <div id="errorBox" class="error-box" hidden></div>
+      </section>
+
+      <section id="previewPanel" class="panel preview-panel" hidden aria-labelledby="previewTitle">
+        <div class="section-heading">
+          <h2 id="previewTitle">תצוגה מקדימה</h2>
+          <p id="previewMeta"></p>
+        </div>
+        <div class="site-frame">
+          <nav class="pages-menu" aria-label="תפריט עמודים">
+            <h3>עמודים</h3>
+            <div id="pagesMenu"></div>
+          </nav>
+          <article class="content-area">
+            <div id="pageContent" class="doc-content"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="publicScreen" class="screen public-screen" hidden>
+    <header class="public-header">
+      <div class="public-title">
+        <img id="publicLogo" alt="" hidden>
+        <div>
+          <p class="eyebrow">Docs2Site</p>
+          <h1 id="publicSiteName"></h1>
+        </div>
+      </div>
+      <label class="search-box" for="siteSearch">
+        <span>חיפוש</span>
+        <input id="siteSearch" type="search" placeholder="חיפוש בדפים">
+      </label>
+    </header>
+    <main class="public-layout">
+      <nav class="pages-menu public-menu" aria-label="תפריט האתר">
+        <h2>עמודים</h2>
+        <div id="publicPagesMenu"></div>
+      </nav>
+      <article class="content-area public-content">
+        <div id="publicPageContent" class="doc-content"></div>
+      </article>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
