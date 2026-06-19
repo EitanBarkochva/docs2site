@@ -18,7 +18,9 @@ const el = {
   adminScreen: document.getElementById("adminScreen"),
   publicScreen: document.getElementById("publicScreen"),
   loginButton: document.getElementById("loginButton"),
+  demoButton: document.getElementById("demoButton"),
   loginMessage: document.getElementById("loginMessage"),
+  setupHint: document.getElementById("setupHint"),
   logoutButton: document.getElementById("logoutButton"),
   siteForm: document.getElementById("siteForm"),
   siteName: document.getElementById("siteName"),
@@ -26,6 +28,7 @@ const el = {
   primaryColor: document.getElementById("primaryColor"),
   logoUrl: document.getElementById("logoUrl"),
   isPublic: document.getElementById("isPublic"),
+  createButton: document.getElementById("createButton"),
   refreshButton: document.getElementById("refreshButton"),
   viewSiteButton: document.getElementById("viewSiteButton"),
   statusText: document.getElementById("statusText"),
@@ -59,6 +62,7 @@ async function initApp() {
 
 function bindEvents() {
   el.loginButton.addEventListener("click", loginWithGoogle);
+  el.demoButton.addEventListener("click", enterDemoMode);
   el.logoutButton.addEventListener("click", logout);
   el.siteForm.addEventListener("submit", createSite);
   el.refreshButton.addEventListener("click", refreshSite);
@@ -66,18 +70,27 @@ function bindEvents() {
 }
 
 async function loadConfig() {
+  if (location.protocol === "file:") {
+    el.loginMessage.textContent = "פתחת את הקובץ ישירות. להתחברות אמיתית צריך להריץ npm start ולפתוח http://localhost:3000.";
+    el.setupHint.hidden = false;
+    return;
+  }
+
   try {
     const config = await apiGet("/api/config");
     googleClientId = config.googleClientId || "";
 
     if (googleClientId) {
       el.loginMessage.textContent = "אפשר להתחבר עם חשבון Google שיש לו גישה לתיקייה.";
+      el.setupHint.hidden = true;
       return;
     }
 
     el.loginMessage.textContent = "חסר GOOGLE_CLIENT_ID בקובץ .env של השרת.";
+    el.setupHint.hidden = false;
   } catch (error) {
-    showError("לא ניתן לטעון את הגדרות האפליקציה מהשרת.");
+    el.setupHint.hidden = false;
+    showError("לא ניתן לטעון את הגדרות האפליקציה מהשרת. ודאו שהרצתם npm start.");
   }
 }
 
@@ -85,7 +98,8 @@ function loginWithGoogle() {
   hideError();
 
   if (!googleClientId) {
-    showError("חסר Google Client ID. הגדירו GOOGLE_CLIENT_ID והפעילו את השרת מחדש.");
+    el.setupHint.hidden = false;
+    showError("חסר Google Client ID. הגדירו GOOGLE_CLIENT_ID בקובץ .env והפעילו את השרת מחדש.");
     return;
   }
 
@@ -103,6 +117,15 @@ function loginWithGoogle() {
   }
 
   tokenClient.requestAccessToken({ prompt: "consent" });
+}
+
+function enterDemoMode() {
+  hideError();
+  currentSite = createDemoSite();
+  selectedPageId = currentSite.pages[0].id;
+  showScreen("admin");
+  setStatus("מצב דמו פעיל. להתחברות אמיתית הגדירו GOOGLE_CLIENT_ID.");
+  renderAdminSite(currentSite);
 }
 
 function handleGoogleToken(response) {
@@ -128,11 +151,17 @@ function logout() {
   el.primaryColor.value = "#2563eb";
   renderAdminSite(null);
   showScreen("login");
+  setStatus("ממתין להתחברות");
 }
 
 async function createSite(event) {
   event.preventDefault();
   hideError();
+
+  if (!accessToken) {
+    showError("כדי ליצור אתר מתיקיית Drive צריך להתחבר עם Google. מצב דמו מציג רק נתונים לדוגמה.");
+    return;
+  }
 
   try {
     setBusy(true, "יוצר אתר מהתיקייה");
@@ -151,6 +180,11 @@ async function createSite(event) {
 
 async function refreshSite() {
   if (!currentSite) {
+    return;
+  }
+
+  if (!accessToken) {
+    showError("רענון מדרייב דורש התחברות Google אמיתית.");
     return;
   }
 
@@ -290,6 +324,44 @@ function showScreen(screenName) {
   el.loginScreen.hidden = screenName !== "login";
   el.adminScreen.hidden = screenName !== "admin";
   el.publicScreen.hidden = screenName !== "public";
+}
+
+function createDemoSite() {
+  const updatedAt = new Date().toISOString();
+
+  return {
+    id: "demo-site",
+    site_name: "אתר לימודי לדוגמה",
+    drive_folder_url: "https://drive.google.com/drive/folders/demo",
+    public_slug: "demo-site",
+    primary_color: "#2563eb",
+    logo_url: "",
+    is_public: true,
+    updated_at: updatedAt,
+    pages: [
+      {
+        id: "demo-1",
+        clean_title: "פתיחה",
+        title: "01 פתיחה",
+        page_order: 1,
+        html_content: "<h1>ברוכים הבאים</h1><p>כך ייראה עמוד שנוצר מתוך Google Docs. התפריט נבנה אוטומטית לפי שמות המסמכים בתיקייה.</p>"
+      },
+      {
+        id: "demo-2",
+        clean_title: "שיעור ראשון",
+        title: "02 שיעור ראשון",
+        page_order: 2,
+        html_content: "<h1>שיעור ראשון</h1><p>אפשר לשלב כותרות, פסקאות, קישורים, טבלאות ותמונות מתוך המסמך המקורי.</p>"
+      },
+      {
+        id: "demo-3",
+        clean_title: "סיכום",
+        title: "03 סיכום",
+        page_order: 3,
+        html_content: "<h1>סיכום</h1><p>כאשר תחברו Google OAuth, הדפים האלה יוחלפו בתוכן אמיתי מתוך תיקיית Drive.</p>"
+      }
+    ]
+  };
 }
 
 function isPublicSiteRoute() {

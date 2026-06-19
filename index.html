@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -16,8 +16,15 @@
       <p class="eyebrow">Docs2Site</p>
       <h1 id="loginTitle">הופכים תיקיית Google Docs לאתר תוכן</h1>
       <p class="lead">התחברו עם Google, הדביקו קישור לתיקיית Drive, וקבלו אתר עברי עם תפריט אוטומטי לפי שמות המסמכים.</p>
-      <button id="loginButton" class="button primary large" type="button">התחברות עם Google</button>
+      <div class="login-actions">
+        <button id="loginButton" class="button primary large" type="button">התחברות עם Google</button>
+        <button id="demoButton" class="button secondary large" type="button">צפייה בדמו</button>
+      </div>
       <p id="loginMessage" class="helper">נדרש Client ID של Google בקובץ הסביבה כדי להתחבר.</p>
+      <div id="setupHint" class="setup-hint" hidden>
+        <strong>כדי שהתחברות Google תעבוד:</strong>
+        <span>מריצים את האתר דרך השרת המקומי, יוצרים קובץ <code>.env</code>, ומגדירים בו <code>GOOGLE_CLIENT_ID</code>.</span>
+      </div>
     </main>
   </div>
 
@@ -112,6 +119,6 @@
     </main>
   </div>
 
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

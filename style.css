@@ -1,15 +1,17 @@
 :root {
-  --bg: #f5f7fb;
+  --bg: #f6f8fc;
   --surface: #ffffff;
-  --surface-soft: #eef4ff;
-  --text: #182230;
-  --muted: #667085;
+  --surface-soft: #eef6ff;
+  --text: #172033;
+  --muted: #64748b;
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
-  --border: #d9e2f2;
+  --border: #dbe6f6;
+  --accent: #14b8a6;
+  --warm: #f8c66d;
   --danger: #b42318;
   --danger-soft: #fff1f0;
-  --shadow: 0 18px 45px rgba(24, 34, 48, 0.1);
+  --shadow: 0 22px 70px rgba(23, 32, 51, 0.12);
   --radius: 8px;
 }
 
@@ -60,8 +62,9 @@ p {
   place-items: center;
   padding: 24px;
   background:
-    linear-gradient(rgba(245, 247, 251, 0.9), rgba(245, 247, 251, 0.9)),
-    url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80") center / cover;
+    radial-gradient(circle at 18% 22%, rgba(20, 184, 166, 0.16), transparent 30%),
+    radial-gradient(circle at 84% 14%, rgba(248, 198, 109, 0.22), transparent 28%),
+    linear-gradient(145deg, #f8fbff 0%, #eef5ff 52%, #f7fafc 100%);
 }
 
 .login-panel,
@@ -73,8 +76,19 @@ p {
 }
 
 .login-panel {
-  width: min(620px, 100%);
-  padding: 36px;
+  width: min(680px, 100%);
+  padding: 42px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-panel::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 7px;
+  background: linear-gradient(90deg, var(--accent), var(--primary), var(--warm));
 }
 
 .eyebrow {
@@ -93,10 +107,24 @@ p {
   line-height: 1.08;
 }
 
+.login-panel h1 {
+  max-width: 560px;
+  color: #0f172a;
+  font-weight: 800;
+}
+
 .lead {
   color: var(--muted);
   font-size: 1.18rem;
   line-height: 1.65;
+}
+
+.login-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 18px;
 }
 
 .button {
@@ -131,7 +159,7 @@ p {
 
 .primary {
   color: #ffffff;
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), #0f8bd6);
 }
 
 .primary:hover:not(:disabled) {
@@ -143,6 +171,29 @@ p {
   color: var(--primary-dark);
   background: var(--surface-soft);
   border: 1px solid #c8d9ff;
+}
+
+.setup-hint {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  color: #334155;
+  background: #f8fbff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  line-height: 1.55;
+}
+
+.setup-hint code {
+  direction: ltr;
+  display: inline-block;
+  padding: 1px 6px;
+  color: #0f172a;
+  background: #e2e8f0;
+  border-radius: 6px;
+  font-family: Consolas, monospace;
+  font-size: 0.92em;
 }
 
 .ghost {
@@ -169,7 +220,9 @@ p {
   gap: 18px;
   padding: 28px max(24px, calc((100vw - 1180px) / 2));
   color: #ffffff;
-  background: #172554;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.96), rgba(15, 118, 110, 0.94)),
+    #172554;
 }
 
 .topbar .eyebrow,
