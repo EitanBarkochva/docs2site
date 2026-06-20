@@ -29,9 +29,11 @@ const el = {
   logoUrl: document.getElementById("logoUrl"),
   isPublic: document.getElementById("isPublic"),
   createButton: document.getElementById("createButton"),
+  exportHtmlButton: document.getElementById("exportHtmlButton"),
   refreshButton: document.getElementById("refreshButton"),
   viewSiteButton: document.getElementById("viewSiteButton"),
   statusText: document.getElementById("statusText"),
+  exportResult: document.getElementById("exportResult"),
   errorBox: document.getElementById("errorBox"),
   previewPanel: document.getElementById("previewPanel"),
   previewTitle: document.getElementById("previewTitle"),
@@ -65,6 +67,7 @@ function bindEvents() {
   el.demoButton.addEventListener("click", enterDemoMode);
   el.logoutButton.addEventListener("click", logout);
   el.siteForm.addEventListener("submit", createSite);
+  el.exportHtmlButton.addEventListener("click", exportHtmlFiles);
   el.refreshButton.addEventListener("click", refreshSite);
   el.siteSearch.addEventListener("input", filterPublicPages);
 }
@@ -178,6 +181,36 @@ async function createSite(event) {
   }
 }
 
+async function exportHtmlFiles() {
+  hideError();
+  el.exportResult.hidden = true;
+  el.exportResult.innerHTML = "";
+
+  if (!accessToken) {
+    showError("כדי ליצור קבצי HTML מתיקיית Drive צריך להתחבר עם Google.");
+    return;
+  }
+
+  const driveFolderUrl = el.folderUrl.value.trim();
+
+  if (!driveFolderUrl) {
+    showError("צריך להדביק קישור לתיקיית Google Drive.");
+    return;
+  }
+
+  try {
+    setBusy(true, "יוצר קבצי HTML מתוך תיקיית Drive");
+    const result = await apiPost("/api/export-html", { driveFolderUrl }, true);
+    renderExportResult(result);
+    setStatus("קבצי HTML נוצרו בהצלחה");
+  } catch (error) {
+    showError(error.message);
+    setStatus("יצירת קבצי HTML נכשלה");
+  } finally {
+    setBusy(false);
+  }
+}
+
 async function refreshSite() {
   if (!currentSite) {
     return;
@@ -236,6 +269,20 @@ function renderAdminSite(site) {
   el.previewMeta.textContent = `${site.pages.length} עמודים · עודכן ${formatDate(site.updated_at)}`;
   renderPages(site.pages, el.pagesMenu, showAdminPage);
   showAdminPage(selectedPageId || site.pages[0]?.id);
+}
+
+function renderExportResult(result) {
+  const fileList = result.files
+    .map((file) => `<li><code>${escapeHtml(file.name)}</code></li>`)
+    .join("");
+
+  el.exportResult.innerHTML = `
+    <strong>נוצרה תיקיית HTML:</strong>
+    <p><code>${escapeHtml(result.outputDir)}</code></p>
+    <p>${result.files.length} קבצים נוצרו מתוך התיקייה "${escapeHtml(result.folderName)}".</p>
+    <ul>${fileList}</ul>
+  `;
+  el.exportResult.hidden = false;
 }
 
 function showAdminPage(pageId) {
@@ -401,6 +448,7 @@ async function readApiResponse(response) {
 
 function setBusy(isBusy, message = "") {
   el.createButton.disabled = isBusy;
+  el.exportHtmlButton.disabled = isBusy;
   el.refreshButton.disabled = isBusy || !currentSite;
 
   if (message) {

@@ -38,6 +38,21 @@ async function listGoogleDocsInFolder(accessToken, folderId) {
   return data.files || [];
 }
 
+async function getDriveFolder(accessToken, folderId) {
+  const params = new URLSearchParams({
+    fields: "id,name,mimeType",
+    supportsAllDrives: "true"
+  });
+  const response = await googleFetch(`https://www.googleapis.com/drive/v3/files/${folderId}?${params}`, accessToken);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw googleError(data, "לא ניתן לקרוא את שם תיקיית Google Drive.");
+  }
+
+  return data;
+}
+
 async function exportGoogleDocToHtml(accessToken, documentId) {
   const exportUrl = `https://www.googleapis.com/drive/v3/files/${documentId}/export?mimeType=text/html`;
   const response = await googleFetch(exportUrl, accessToken);
@@ -79,6 +94,7 @@ function googleError(data, fallback) {
 module.exports = {
   GOOGLE_DOC_MIME_TYPE,
   getGoogleUser,
+  getDriveFolder,
   listGoogleDocsInFolder,
   exportGoogleDocToHtml
 };

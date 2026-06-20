@@ -6,6 +6,7 @@ const express = require("express");
 const path = require("path");
 const { getGoogleUser } = require("./googleDriveService");
 const { buildPagesFromFolder, extractFolderId } = require("./googleDocsService");
+const { exportDriveFolderToStaticHtml } = require("./staticHtmlExportService");
 const {
   upsertUser,
   createSiteWithPages,
@@ -62,6 +63,21 @@ app.post("/api/sites/:siteId/refresh", requireGoogleToken, async (req, res) => {
     const pages = await buildPagesFromFolder(req.googleAccessToken, existingSite.drive_folder_id);
     const site = await replaceSitePages(existingSite.id, pages);
     res.json(site);
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+app.post("/api/export-html", requireGoogleToken, async (req, res) => {
+  try {
+    const driveFolderUrl = String(req.body.driveFolderUrl || "").trim();
+
+    if (!driveFolderUrl) {
+      return res.status(400).json({ error: "צריך להדביק קישור לתיקיית Google Drive." });
+    }
+
+    const result = await exportDriveFolderToStaticHtml(req.googleAccessToken, driveFolderUrl);
+    res.status(201).json(result);
   } catch (error) {
     sendError(res, error);
   }

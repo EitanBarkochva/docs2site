@@ -312,7 +312,8 @@ p {
 }
 
 .status-box,
-.error-box {
+.error-box,
+.export-result {
   margin-top: 18px;
   padding: 12px 14px;
   border-radius: var(--radius);
@@ -344,6 +345,34 @@ p {
   background: var(--danger-soft);
   border: 1px solid #ffd2cc;
   font-weight: 800;
+}
+
+.export-result {
+  color: #134e4a;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  line-height: 1.6;
+}
+
+.export-result p {
+  margin: 6px 0;
+}
+
+.export-result ul {
+  margin: 8px 0 0;
+  padding-inline-start: 22px;
+}
+
+.export-result code {
+  direction: ltr;
+  display: inline-block;
+  max-width: 100%;
+  padding: 1px 6px;
+  overflow-wrap: anywhere;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
 }
 
 .preview-panel {
