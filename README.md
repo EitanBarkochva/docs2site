@@ -2,6 +2,14 @@
 
 Docs2Site הוא MVP פשוט שממיר תיקיית Google Drive עם קבצי Google Docs לקבצי HTML סטטיים או לאתר תוכן מקומי.
 
+## URL הפעלה
+
+אחרי שהשרת רץ עם `npm start`, פותחים:
+
+```text
+http://localhost:3000
+```
+
 ## מה האפליקציה עושה
 
 - התחברות עם Google OAuth
