@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -15,16 +15,16 @@
   <div id="loginScreen" class="screen login-screen">
     <main class="login-panel" aria-labelledby="loginTitle">
       <p class="eyebrow">Docs2Site</p>
-      <h1 id="loginTitle">×”×•×¤×›×™× ×ª×™×§×™×™×ª Google Docs ×œ××ª×¨ ×ª×•×›×Ÿ</h1>
-      <p class="lead">×”×ª×—×‘×¨×• ×¢× Google, ×”×“×‘×™×§×• ×§×™×©×•×¨ ×œ×ª×™×§×™×™×ª Drive, ×•×§×‘×œ×• ××ª×¨ ×¢×‘×¨×™ ×¢× ×ª×¤×¨×™×˜ ××•×˜×•×ž×˜×™ ×œ×¤×™ ×©×ž×•×ª ×”×ž×¡×ž×›×™×.</p>
+      <h1 id="loginTitle">הופכים תיקיית Google Docs לאתר תוכן</h1>
+      <p class="lead">התחברו עם Google, הדביקו קישור לתיקיית Drive, וקבלו אתר עברי עם תפריט אוטומטי לפי שמות המסמכים.</p>
       <div class="login-actions">
-        <button id="loginButton" class="button primary large" type="button">×”×ª×—×‘×¨×•×ª ×¢× Google</button>
-        <button id="demoButton" class="button secondary large" type="button">×¦×¤×™×™×” ×‘×“×ž×•</button>
+        <button id="loginButton" class="button primary large" type="button">התחברות עם Google</button>
+        <button id="demoButton" class="button secondary large" type="button">צפייה בדמו</button>
       </div>
-      <p id="loginMessage" class="helper">× ×“×¨×© Client ID ×©×œ Google ×‘×§×•×‘×¥ ×”×¡×‘×™×‘×” ×›×“×™ ×œ×”×ª×—×‘×¨.</p>
+      <p id="loginMessage" class="helper">נדרש Client ID של Google בקובץ הסביבה כדי להתחבר.</p>
       <div id="setupHint" class="setup-hint" hidden>
-        <strong>×›×“×™ ×©×”×ª×—×‘×¨×•×ª Google ×ª×¢×‘×•×“:</strong>
-        <span>×ž×¨×™×¦×™× ××ª ×”××ª×¨ ×“×¨×š ×”×©×¨×ª ×”×ž×§×•×ž×™, ×™×•×¦×¨×™× ×§×•×‘×¥ <code>.env</code>, ×•×ž×’×“×™×¨×™× ×‘×• <code>GOOGLE_CLIENT_ID</code>.</span>
+        <strong>כדי שהתחברות Google תעבוד:</strong>
+        <span>מריצים את האתר דרך השרת המקומי, יוצרים קובץ <code>.env</code>, ומגדירים בו <code>GOOGLE_CLIENT_ID</code>.</span>
       </div>
     </main>
   </div>
@@ -33,47 +33,47 @@
     <header class="topbar">
       <div>
         <p class="eyebrow">Docs2Site</p>
-        <h1>× ×™×”×•×œ ××ª×¨</h1>
+        <h1>ניהול אתר</h1>
       </div>
-      <button id="logoutButton" class="button ghost" type="button">×”×ª× ×ª×§×•×ª</button>
+      <button id="logoutButton" class="button ghost" type="button">התנתקות</button>
     </header>
 
     <main class="admin-layout">
       <section class="panel" aria-labelledby="siteFormTitle">
         <div class="section-heading">
-          <h2 id="siteFormTitle">×™×¦×™×¨×ª ××ª×¨ ×ž×ª×™×§×™×™×”</h2>
-          <p>×”×ž×¢×¨×›×ª ×©×•×œ×¤×ª ×¨×§ ×§×‘×¦×™ Google Docs ×ž×ª×•×š ×”×ª×™×§×™×™×”, ×ž×ž×™×™× ×ª ××•×ª× ×œ×¤×™ ×©×, ×•×ž×™×™×¦××ª ×›×œ ×ž×¡×ž×š ×œ×¢×ž×•×“ HTML.</p>
+          <h2 id="siteFormTitle">יצירת אתר מתיקייה</h2>
+          <p>המערכת שולפת רק קבצי Google Docs מתוך התיקייה, ממיינת אותם לפי שם, ומייצאת כל מסמך לעמוד HTML.</p>
         </div>
 
         <form id="siteForm" class="site-form">
-          <label for="siteName">×©× ×”××ª×¨</label>
-          <input id="siteName" name="siteName" type="text" placeholder="×œ×“×•×’×ž×”: ×§×•×¨×¡ ×ž×‘×•×" autocomplete="off" required>
+          <label for="siteName">שם האתר</label>
+          <input id="siteName" name="siteName" type="text" placeholder="לדוגמה: קורס מבוא" autocomplete="off" required>
 
-          <label for="folderUrl">×§×™×©×•×¨ ×œ×ª×™×§×™×™×ª Google Drive</label>
+          <label for="folderUrl">קישור לתיקיית Google Drive</label>
           <input id="folderUrl" name="folderUrl" type="url" dir="ltr" placeholder="https://drive.google.com/drive/folders/..." required>
 
-          <label for="primaryColor">×¦×‘×¢ ×¨××©×™</label>
+          <label for="primaryColor">צבע ראשי</label>
           <input id="primaryColor" name="primaryColor" type="color" value="#2563eb">
 
-          <label for="logoUrl">×§×™×©×•×¨ ×œ×œ×•×’×•, ×œ× ×—×•×‘×”</label>
+          <label for="logoUrl">קישור ללוגו, לא חובה</label>
           <input id="logoUrl" name="logoUrl" type="url" dir="ltr" placeholder="https://example.com/logo.png">
 
           <label class="toggle-row" for="isPublic">
             <input id="isPublic" name="isPublic" type="checkbox" checked>
-            <span>×¤×¨×¡×•× ×›××ª×¨ ×¦×™×‘×•×¨×™</span>
+            <span>פרסום כאתר ציבורי</span>
           </label>
 
           <div class="actions">
-            <button id="createButton" class="button primary" type="submit">×¦×•×¨ ××ª×¨</button>
-            <button id="exportHtmlButton" class="button primary" type="button">×¦×•×¨ ×§×‘×¦×™ HTML</button>
-            <button id="refreshButton" class="button secondary" type="button" disabled>×¨×¢× ×Ÿ ×ª×•×›×Ÿ</button>
-            <a id="viewSiteButton" class="button secondary link-button" href="#" target="_blank" rel="noreferrer" aria-disabled="true">×¦×¤×” ×‘××ª×¨</a>
+            <button id="createButton" class="button primary" type="submit">צור אתר</button>
+            <button id="exportHtmlButton" class="button primary" type="button">צור קבצי HTML</button>
+            <button id="refreshButton" class="button secondary" type="button" disabled>רענן תוכן</button>
+            <a id="viewSiteButton" class="button secondary link-button" href="#" target="_blank" rel="noreferrer" aria-disabled="true">צפה באתר</a>
           </div>
         </form>
 
         <div class="status-box" role="status" aria-live="polite">
           <span class="status-dot" aria-hidden="true"></span>
-          <p id="statusText">×ž×ž×ª×™×Ÿ ×œ×”×ª×—×‘×¨×•×ª</p>
+          <p id="statusText">ממתין להתחברות</p>
         </div>
         <div id="exportResult" class="export-result" hidden></div>
         <div id="errorBox" class="error-box" hidden></div>
@@ -81,12 +81,12 @@
 
       <section id="previewPanel" class="panel preview-panel" hidden aria-labelledby="previewTitle">
         <div class="section-heading">
-          <h2 id="previewTitle">×ª×¦×•×’×” ×ž×§×“×™×ž×”</h2>
+          <h2 id="previewTitle">תצוגה מקדימה</h2>
           <p id="previewMeta"></p>
         </div>
         <div class="site-frame">
-          <nav class="pages-menu" aria-label="×ª×¤×¨×™×˜ ×¢×ž×•×“×™×">
-            <h3>×¢×ž×•×“×™×</h3>
+          <nav class="pages-menu" aria-label="תפריט עמודים">
+            <h3>עמודים</h3>
             <div id="pagesMenu"></div>
           </nav>
           <article class="content-area">
@@ -107,13 +107,13 @@
         </div>
       </div>
       <label class="search-box" for="siteSearch">
-        <span>×—×™×¤×•×©</span>
-        <input id="siteSearch" type="search" placeholder="×—×™×¤×•×© ×‘×“×¤×™×">
+        <span>חיפוש</span>
+        <input id="siteSearch" type="search" placeholder="חיפוש בדפים">
       </label>
     </header>
     <main class="public-layout">
-      <nav class="pages-menu public-menu" aria-label="×ª×¤×¨×™×˜ ×”××ª×¨">
-        <h2>×¢×ž×•×“×™×</h2>
+      <nav class="pages-menu public-menu" aria-label="תפריט האתר">
+        <h2>עמודים</h2>
         <div id="publicPagesMenu"></div>
       </nav>
       <article class="content-area public-content">
@@ -127,5 +127,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-
-

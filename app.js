@@ -1,4 +1,4 @@
-﻿// Docs2Site - ×œ×•×’×™×§×ª ×¦×“ ×œ×§×•×— ×œ×ž×¡×›×™ ×”×ª×—×‘×¨×•×ª, × ×™×”×•×œ ×•×ª×¦×•×’×ª ××ª×¨ ×¦×™×‘×•×¨×™.
+// Docs2Site - לוגיקת צד לקוח למסכי התחברות, ניהול ותצוגת אתר ציבורי.
 
 const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/drive.readonly",
@@ -58,7 +58,7 @@ async function initApp() {
   }
 
   showScreen("login");
-  setStatus("×ž×ž×ª×™×Ÿ ×œ×”×ª×—×‘×¨×•×ª");
+  setStatus("ממתין להתחברות");
   await loadConfig();
 }
 
@@ -85,7 +85,7 @@ async function loadConfig() {
     return;
   }
   if (location.protocol === "file:") {
-    el.loginMessage.textContent = "×¤×ª×—×ª ××ª ×”×§×•×‘×¥ ×™×©×™×¨×•×ª. ×œ×”×ª×—×‘×¨×•×ª ××ž×™×ª×™×ª ×¦×¨×™×š ×œ×”×¨×™×¥ npm start ×•×œ×¤×ª×•×— http://localhost:3000.";
+    el.loginMessage.textContent = "פתחת את הקובץ ישירות. להתחברות אמיתית צריך להריץ npm start ולפתוח http://localhost:3000.";
     el.setupHint.hidden = false;
     return;
   }
@@ -95,16 +95,16 @@ async function loadConfig() {
     googleClientId = config.googleClientId || "";
 
     if (googleClientId) {
-      el.loginMessage.textContent = "××¤×©×¨ ×œ×”×ª×—×‘×¨ ×¢× ×—×©×‘×•×Ÿ Google ×©×™×© ×œ×• ×’×™×©×” ×œ×ª×™×§×™×™×”.";
+      el.loginMessage.textContent = "אפשר להתחבר עם חשבון Google שיש לו גישה לתיקייה.";
       el.setupHint.hidden = true;
       return;
     }
 
-    el.loginMessage.textContent = "×—×¡×¨ GOOGLE_CLIENT_ID ×‘×§×•×‘×¥ .env ×©×œ ×”×©×¨×ª.";
+    el.loginMessage.textContent = "חסר GOOGLE_CLIENT_ID בקובץ .env של השרת.";
     el.setupHint.hidden = false;
   } catch (error) {
     el.setupHint.hidden = false;
-    showError("×œ× × ×™×ª×Ÿ ×œ×˜×¢×•×Ÿ ××ª ×”×’×“×¨×•×ª ×”××¤×œ×™×§×¦×™×” ×ž×”×©×¨×ª. ×•×“××• ×©×”×¨×¦×ª× npm start.");
+    showError("לא ניתן לטעון את הגדרות האפליקציה מהשרת. ודאו שהרצתם npm start.");
   }
 }
 
@@ -113,12 +113,12 @@ function loginWithGoogle() {
 
   if (!googleClientId) {
     el.setupHint.hidden = false;
-    showError("×—×¡×¨ Google Client ID. ×”×’×“×™×¨×• GOOGLE_CLIENT_ID ×‘×§×•×‘×¥ .env ×•×”×¤×¢×™×œ×• ××ª ×”×©×¨×ª ×ž×—×“×©.");
+    showError("חסר Google Client ID. הגדירו GOOGLE_CLIENT_ID בקובץ .env והפעילו את השרת מחדש.");
     return;
   }
 
   if (!window.google?.accounts?.oauth2) {
-    showError("Google Identity Services ×¢×“×™×™×Ÿ ×œ× × ×˜×¢×Ÿ. × ×¡×• ×©×•×‘ ×‘×¢×•×“ ×¨×’×¢.");
+    showError("Google Identity Services עדיין לא נטען. נסו שוב בעוד רגע.");
     return;
   }
 
@@ -138,19 +138,19 @@ function enterDemoMode() {
   currentSite = createDemoSite();
   selectedPageId = currentSite.pages[0].id;
   showScreen("admin");
-  setStatus("×ž×¦×‘ ×“×ž×• ×¤×¢×™×œ. ×œ×”×ª×—×‘×¨×•×ª ××ž×™×ª×™×ª ×”×’×“×™×¨×• GOOGLE_CLIENT_ID.");
+  setStatus("מצב דמו פעיל. להתחברות אמיתית הגדירו GOOGLE_CLIENT_ID.");
   renderAdminSite(currentSite);
 }
 
 function handleGoogleToken(response) {
   if (response.error || !response.access_token) {
-    showError("×”×”×ª×—×‘×¨×•×ª × ×›×©×œ×”. × ×¡×• ×©×•×‘.");
+    showError("ההתחברות נכשלה. נסו שוב.");
     return;
   }
 
   accessToken = response.access_token;
   showScreen("admin");
-  setStatus("×”×ª×—×‘×¨×ª ×‘×”×¦×œ×—×”");
+  setStatus("התחברת בהצלחה");
 }
 
 function logout() {
@@ -165,7 +165,7 @@ function logout() {
   el.primaryColor.value = "#2563eb";
   renderAdminSite(null);
   showScreen("login");
-  setStatus("×ž×ž×ª×™×Ÿ ×œ×”×ª×—×‘×¨×•×ª");
+  setStatus("ממתין להתחברות");
 }
 
 async function createSite(event) {
@@ -173,20 +173,20 @@ async function createSite(event) {
   hideError();
 
   if (!accessToken) {
-    showError("×›×“×™ ×œ×™×¦×•×¨ ××ª×¨ ×ž×ª×™×§×™×™×ª Drive ×¦×¨×™×š ×œ×”×ª×—×‘×¨ ×¢× Google. ×ž×¦×‘ ×“×ž×• ×ž×¦×™×’ ×¨×§ × ×ª×•× ×™× ×œ×“×•×’×ž×”.");
+    showError("כדי ליצור אתר מתיקיית Drive צריך להתחבר עם Google. מצב דמו מציג רק נתונים לדוגמה.");
     return;
   }
 
   try {
-    setBusy(true, "×™×•×¦×¨ ××ª×¨ ×ž×”×ª×™×§×™×™×”");
+    setBusy(true, "יוצר אתר מהתיקייה");
     const payload = readSiteForm();
     currentSite = await apiPost("/api/sites", payload, true);
     selectedPageId = currentSite.pages[0]?.id || "";
     renderAdminSite(currentSite);
-    setStatus("×”××ª×¨ × ×•×¦×¨ ×‘×”×¦×œ×—×”");
+    setStatus("האתר נוצר בהצלחה");
   } catch (error) {
     showError(error.message);
-    setStatus("×™×¦×™×¨×ª ×”××ª×¨ × ×›×©×œ×”");
+    setStatus("יצירת האתר נכשלה");
   } finally {
     setBusy(false);
   }
@@ -198,27 +198,27 @@ async function exportHtmlFiles() {
   el.exportResult.innerHTML = "";
 
   if (!accessToken) {
-    showError("×›×“×™ ×œ×™×¦×•×¨ ×§×‘×¦×™ HTML ×ž×ª×™×§×™×™×ª Drive ×¦×¨×™×š ×œ×”×ª×—×‘×¨ ×¢× Google.");
+    showError("כדי ליצור קבצי HTML מתיקיית Drive צריך להתחבר עם Google.");
     return;
   }
 
   const driveFolderUrl = el.folderUrl.value.trim();
 
   if (!driveFolderUrl) {
-    showError("×¦×¨×™×š ×œ×”×“×‘×™×§ ×§×™×©×•×¨ ×œ×ª×™×§×™×™×ª Google Drive.");
+    showError("צריך להדביק קישור לתיקיית Google Drive.");
     return;
   }
 
   try {
-    setBusy(true, "×™×•×¦×¨ ×§×‘×¦×™ HTML ×ž×ª×•×š ×ª×™×§×™×™×ª Drive");
+    setBusy(true, "יוצר קבצי HTML מתוך תיקיית Drive");
     const result = isStaticHosting()
       ? await window.exportDriveFolderAsZip(accessToken, driveFolderUrl)
       : await apiPost("/api/export-html", { driveFolderUrl }, true);
     renderExportResult(result);
-    setStatus("×§×‘×¦×™ HTML × ×•×¦×¨×• ×‘×”×¦×œ×—×”");
+    setStatus("קבצי HTML נוצרו בהצלחה");
   } catch (error) {
     showError(error.message);
-    setStatus("×™×¦×™×¨×ª ×§×‘×¦×™ HTML × ×›×©×œ×”");
+    setStatus("יצירת קבצי HTML נכשלה");
   } finally {
     setBusy(false);
   }
@@ -230,21 +230,21 @@ async function refreshSite() {
   }
 
   if (!accessToken) {
-    showError("×¨×¢× ×•×Ÿ ×ž×“×¨×™×™×‘ ×“×•×¨×© ×”×ª×—×‘×¨×•×ª Google ××ž×™×ª×™×ª.");
+    showError("רענון מדרייב דורש התחברות Google אמיתית.");
     return;
   }
 
   hideError();
 
   try {
-    setBusy(true, "×ž×¨×¢× ×Ÿ ×ª×•×›×Ÿ ×ž×”×“×¨×™×™×‘");
+    setBusy(true, "מרענן תוכן מהדרייב");
     currentSite = await apiPost(`/api/sites/${currentSite.id}/refresh`, {}, true);
     selectedPageId = currentSite.pages[0]?.id || "";
     renderAdminSite(currentSite);
-    setStatus("×”×ª×•×›×Ÿ ×¢×•×“×›×Ÿ ×‘×”×¦×œ×—×”");
+    setStatus("התוכן עודכן בהצלחה");
   } catch (error) {
     showError(error.message);
-    setStatus("×¨×¢× ×•×Ÿ ×”×ª×•×›×Ÿ × ×›×©×œ");
+    setStatus("רענון התוכן נכשל");
   } finally {
     setBusy(false);
   }
@@ -279,7 +279,7 @@ function renderAdminSite(site) {
   el.logoUrl.value = site.logo_url || "";
   el.isPublic.checked = site.is_public !== false;
   el.previewTitle.textContent = site.site_name;
-  el.previewMeta.textContent = `${site.pages.length} ×¢×ž×•×“×™× Â· ×¢×•×“×›×Ÿ ${formatDate(site.updated_at)}`;
+  el.previewMeta.textContent = `${site.pages.length} עמודים · עודכן ${formatDate(site.updated_at)}`;
   renderPages(site.pages, el.pagesMenu, showAdminPage);
   showAdminPage(selectedPageId || site.pages[0]?.id);
 }
@@ -290,9 +290,9 @@ function renderExportResult(result) {
     .join("");
 
   el.exportResult.innerHTML = `
-    <strong>× ×•×¦×¨×” ×ª×™×§×™×™×ª HTML:</strong>
+    <strong>נוצרה תיקיית HTML:</strong>
     <p><code>${escapeHtml(result.outputDir)}</code></p>
-    <p>${result.files.length} ×§×‘×¦×™× × ×•×¦×¨×• ×ž×ª×•×š ×”×ª×™×§×™×™×” "${escapeHtml(result.folderName)}".</p>
+    <p>${result.files.length} קבצים נוצרו מתוך התיקייה "${escapeHtml(result.folderName)}".</p>
     <ul>${fileList}</ul>
   `;
   el.exportResult.hidden = false;
@@ -302,7 +302,7 @@ function showAdminPage(pageId) {
   const page = currentSite?.pages.find((item) => item.id === pageId);
 
   if (!page) {
-    el.pageContent.innerHTML = "<p>×œ× × ×‘×—×¨ ×“×£ ×œ×”×¦×’×”.</p>";
+    el.pageContent.innerHTML = "<p>לא נבחר דף להצגה.</p>";
     return;
   }
 
@@ -320,14 +320,14 @@ async function loadPublicSite() {
     selectedPageId = currentSite.pages[0]?.id || "";
     renderPublicSite(currentSite);
   } catch (error) {
-    el.publicSiteName.textContent = "×”××ª×¨ ×œ× × ×ž×¦×";
+    el.publicSiteName.textContent = "האתר לא נמצא";
     el.publicPageContent.innerHTML = `<p>${escapeHtml(error.message)}</p>`;
   }
 }
 
 function renderPublicSite(site) {
   document.documentElement.style.setProperty("--primary", site.primary_color || "#2563eb");
-  document.title = `${site.site_name} Â· Docs2Site`;
+  document.title = `${site.site_name} · Docs2Site`;
   el.publicSiteName.textContent = site.site_name;
 
   if (site.logo_url) {
@@ -343,7 +343,7 @@ function showPublicPage(pageId) {
   const page = currentSite?.pages.find((item) => item.id === pageId);
 
   if (!page) {
-    el.publicPageContent.innerHTML = "<p>×œ× × ×ž×¦× ×ª×•×›×Ÿ ×œ×”×¦×’×”.</p>";
+    el.publicPageContent.innerHTML = "<p>לא נמצא תוכן להצגה.</p>";
     return;
   }
 
@@ -391,7 +391,7 @@ function createDemoSite() {
 
   return {
     id: "demo-site",
-    site_name: "××ª×¨ ×œ×™×ž×•×“×™ ×œ×“×•×’×ž×”",
+    site_name: "אתר לימודי לדוגמה",
     drive_folder_url: "https://drive.google.com/drive/folders/demo",
     public_slug: "demo-site",
     primary_color: "#2563eb",
@@ -401,24 +401,24 @@ function createDemoSite() {
     pages: [
       {
         id: "demo-1",
-        clean_title: "×¤×ª×™×—×”",
-        title: "01 ×¤×ª×™×—×”",
+        clean_title: "פתיחה",
+        title: "01 פתיחה",
         page_order: 1,
-        html_content: "<h1>×‘×¨×•×›×™× ×”×‘××™×</h1><p>×›×š ×™×™×¨××” ×¢×ž×•×“ ×©× ×•×¦×¨ ×ž×ª×•×š Google Docs. ×”×ª×¤×¨×™×˜ × ×‘× ×” ××•×˜×•×ž×˜×™×ª ×œ×¤×™ ×©×ž×•×ª ×”×ž×¡×ž×›×™× ×‘×ª×™×§×™×™×”.</p>"
+        html_content: "<h1>ברוכים הבאים</h1><p>כך ייראה עמוד שנוצר מתוך Google Docs. התפריט נבנה אוטומטית לפי שמות המסמכים בתיקייה.</p>"
       },
       {
         id: "demo-2",
-        clean_title: "×©×™×¢×•×¨ ×¨××©×•×Ÿ",
-        title: "02 ×©×™×¢×•×¨ ×¨××©×•×Ÿ",
+        clean_title: "שיעור ראשון",
+        title: "02 שיעור ראשון",
         page_order: 2,
-        html_content: "<h1>×©×™×¢×•×¨ ×¨××©×•×Ÿ</h1><p>××¤×©×¨ ×œ×©×œ×‘ ×›×•×ª×¨×•×ª, ×¤×¡×§××•×ª, ×§×™×©×•×¨×™×, ×˜×‘×œ××•×ª ×•×ª×ž×•× ×•×ª ×ž×ª×•×š ×”×ž×¡×ž×š ×”×ž×§×•×¨×™.</p>"
+        html_content: "<h1>שיעור ראשון</h1><p>אפשר לשלב כותרות, פסקאות, קישורים, טבלאות ותמונות מתוך המסמך המקורי.</p>"
       },
       {
         id: "demo-3",
-        clean_title: "×¡×™×›×•×",
-        title: "03 ×¡×™×›×•×",
+        clean_title: "סיכום",
+        title: "03 סיכום",
         page_order: 3,
-        html_content: "<h1>×¡×™×›×•×</h1><p>×›××©×¨ ×ª×—×‘×¨×• Google OAuth, ×”×“×¤×™× ×”××œ×” ×™×•×—×œ×¤×• ×‘×ª×•×›×Ÿ ××ž×™×ª×™ ×ž×ª×•×š ×ª×™×§×™×™×ª Drive.</p>"
+        html_content: "<h1>סיכום</h1><p>כאשר תחברו Google OAuth, הדפים האלה יוחלפו בתוכן אמיתי מתוך תיקיית Drive.</p>"
       }
     ]
   };
@@ -457,7 +457,7 @@ async function readApiResponse(response) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.error || "××™×¨×¢×” ×©×’×™××” ×œ× ×¦×¤×•×™×”");
+    throw new Error(data.error || "אירעה שגיאה לא צפויה");
   }
 
   return data;
@@ -509,4 +509,3 @@ function escapeHtml(text) {
     "'": "&#039;"
   }[char]));
 }
-
