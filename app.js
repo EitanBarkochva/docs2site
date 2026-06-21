@@ -34,6 +34,11 @@ const el = {
   viewSiteButton: document.getElementById("viewSiteButton"),
   statusText: document.getElementById("statusText"),
   exportResult: document.getElementById("exportResult"),
+  githubPublishPanel: document.getElementById("githubPublishPanel"),
+  githubRepoName: document.getElementById("githubRepoName"),
+  githubToken: document.getElementById("githubToken"),
+  publishGithubButton: document.getElementById("publishGithubButton"),
+  githubPublishResult: document.getElementById("githubPublishResult"),
   errorBox: document.getElementById("errorBox"),
   previewPanel: document.getElementById("previewPanel"),
   previewTitle: document.getElementById("previewTitle"),
@@ -68,6 +73,7 @@ function bindEvents() {
   el.logoutButton.addEventListener("click", logout);
   el.siteForm.addEventListener("submit", createSite);
   el.exportHtmlButton.addEventListener("click", exportHtmlFiles);
+  el.publishGithubButton.addEventListener("click", publishToGithub);
   el.refreshButton.addEventListener("click", refreshSite);
   el.siteSearch.addEventListener("input", filterPublicPages);
 }
@@ -162,6 +168,9 @@ function logout() {
   currentSite = null;
   selectedPageId = "";
   el.siteForm.reset();
+  el.githubPublishPanel.hidden = true;
+  el.githubPublishResult.hidden = true;
+  el.githubToken.value = "";
   el.primaryColor.value = "#2563eb";
   renderAdminSite(null);
   showScreen("login");
@@ -296,6 +305,60 @@ function renderExportResult(result) {
     <ul>${fileList}</ul>
   `;
   el.exportResult.hidden = false;
+  if (window.docs2siteGeneratedSite) {
+    el.githubRepoName.value = makeRepoName(result.folderName);
+    el.githubPublishPanel.hidden = false;
+    el.githubPublishResult.hidden = true;
+  }
+}
+
+async function publishToGithub() {
+  hideError();
+  const token = el.githubToken.value.trim();
+  const repoName = makeRepoName(el.githubRepoName.value);
+
+  if (!window.docs2siteGeneratedSite) {
+    showError("קודם צריך ליצור את קובצי ה-HTML.");
+    return;
+  }
+  if (!repoName) {
+    showError("צריך להזין שם repository.");
+    return;
+  }
+  if (!token) {
+    showError("צריך להזין GitHub Personal Access Token.");
+    return;
+  }
+
+  el.publishGithubButton.disabled = true;
+  el.githubPublishResult.hidden = true;
+  setStatus("מעלה את האתר ל-GitHub ומפעיל GitHub Pages");
+
+  try {
+    const result = await window.publishGeneratedSite({
+      token,
+      repoName,
+      generatedSite: window.docs2siteGeneratedSite
+    });
+    el.githubToken.value = "";
+    el.githubPublishResult.innerHTML = `<strong>האתר פורסם בהצלחה</strong><p><a href="${escapeHtml(result.siteUrl)}" target="_blank" rel="noreferrer">פתח את האתר הציבורי</a></p><p><code>${escapeHtml(result.siteUrl)}</code></p>`;
+    el.githubPublishResult.hidden = false;
+    setStatus("האתר פורסם. ייתכן שיידרשו עד שתי דקות עד שהקישור יהיה זמין.");
+  } catch (error) {
+    showError(error.message);
+    setStatus("פרסום האתר ב-GitHub נכשל");
+  } finally {
+    el.publishGithubButton.disabled = false;
+  }
+}
+
+function makeRepoName(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
 }
 
 function showAdminPage(pageId) {

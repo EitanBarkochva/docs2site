@@ -33,10 +33,18 @@
     var zip = new JSZip();
     var zipName = safeName(folder.name) + " HTML";
     var root = zip.folder(zipName);
-    pages.forEach(function (page) {
-      root.file(page.fileName, renderPage(folder.name, page, pages));
+    var generatedFiles = pages.map(function (page) {
+      return { path: page.fileName, content: renderPage(folder.name, page, pages) };
     });
-    root.file("index.html", renderPage(folder.name, pages[0], pages));
+    generatedFiles.forEach(function (file) {
+      root.file(file.path, file.content);
+    });
+    var indexContent = renderPage(folder.name, pages[0], pages);
+    root.file("index.html", indexContent);
+    window.docs2siteGeneratedSite = {
+      folderName: folder.name,
+      files: [{ path: "index.html", content: indexContent }].concat(generatedFiles)
+    };
 
     var blob = await zip.generateAsync({ type: "blob" });
     var link = document.createElement("a");

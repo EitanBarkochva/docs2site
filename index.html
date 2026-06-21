@@ -76,6 +76,21 @@
           <p id="statusText">ממתין להתחברות</p>
         </div>
         <div id="exportResult" class="export-result" hidden></div>
+        <section id="githubPublishPanel" class="github-publish" hidden aria-labelledby="githubPublishTitle">
+          <h3 id="githubPublishTitle">פרסום האתר ב-GitHub</h3>
+          <p>ה-token משמש רק לפרסום הנוכחי, נשלח ישירות ל-GitHub ואינו נשמר.</p>
+          <div class="github-fields">
+            <label for="githubRepoName">שם ה-repository</label>
+            <input id="githubRepoName" type="text" dir="ltr" placeholder="my-docs-site">
+            <label for="githubToken">GitHub Personal Access Token</label>
+            <input id="githubToken" type="password" dir="ltr" autocomplete="off" placeholder="ghp_...">
+          </div>
+          <div class="actions">
+            <button id="publishGithubButton" class="button primary" type="button">פרסם וקבל קישור</button>
+            <a class="button secondary" href="https://github.com/settings/tokens/new?scopes=repo&description=Docs2Site" target="_blank" rel="noreferrer">צור GitHub token</a>
+          </div>
+          <div id="githubPublishResult" class="publish-result" hidden></div>
+        </section>
         <div id="errorBox" class="error-box" hidden></div>
       </section>
 
@@ -124,6 +139,7 @@
 
   <script src="public-config.js"></script>
   <script src="browserStaticExport.js"></script>
+  <script src="githubPublishService.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
